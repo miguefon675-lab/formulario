@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Encuesta Digital Pro | Analytics & Firebase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #818cf8;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --text-light: #94a3b8;
+            --border: #334155;
+            --input-bg: #0f172a;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .survey-container {
+            background: var(--card);
+            width: 100%;
+            max-width: 450px;
+            min-height: 580px;
+            margin: 15px;
+            padding: 45px 35px;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .progress-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 30px 30px 0 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step { display: none; flex-direction: column; animation: fadeIn 0.4s ease-out; height: 100%; }
+        .step.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { font-size: 1.6rem; font-weight: 700; margin: 0 0 10px 0; letter-spacing: -0.5px; }
+        .subtitle { font-size: 0.95rem; color: var(--text-light); margin-bottom: 30px; }
+
+        .form-group { margin-bottom: 24px; }
+        label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; color: var(--primary-hover); letter-spacing: 1px; }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%; height: 55px; padding: 0 18px; border: 2px solid var(--border);
+            border-radius: 16px; font-size: 1rem; background: var(--input-bg); color: white; transition: all 0.3s;
+        }
+
+        .option-box {
+            display: flex; align-items: center; background: var(--input-bg); padding: 18px;
+            border: 2px solid var(--border); border-radius: 16px; margin-bottom: 14px; cursor: pointer; transition: 0.2s;
+        }
+
+        .option-box:hover { border-color: var(--primary-hover); background: rgba(99, 102, 241, 0.05); }
+
+        .nav-footer { margin-top: auto; display: flex; gap: 15px; padding-top: 25px; }
+
+        button { flex: 1; height: 58px; border-radius: 18px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; transition: 0.3s; }
+        .btn-next { background: var(--primary); color: white; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); }
+        .btn-back { background: transparent; color: var(--text-light); border: 2px solid var(--border); }
+
+        .success-state { text-align: center; justify-content: center; }
+        .icon-check { width: 80px; height: 80px; background: rgba(34, 197, 94, 0.2); color: #4ade80; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; margin: 0 auto 25px; }
+    </style>
+</head>
+<body>
+
+<div class="survey-container">
+    <div class="progress-track"><div class="progress-fill" id="bar"></div></div>
+
+    <form id="socialSurvey" onsubmit="return false;">
+        <div class="step active">
+            <h2>Sobre ti</h2>
+            <p class="subtitle">Cuéntanos un poco quién eres.</p>
+            <div class="form-group">
+                <label>¿Cómo te llamas?</label>
+                <input type="text" id="userName" placeholder="Escribe tu nombre">
+            </div>
+            <div class="form-group">
+                <label>Tu edad</label>
+                <input type="number" id="userAge" placeholder="Ej. 25">
+            </div>
+            <div class="nav-footer">
+                <button type="button" class="btn-next" onclick="next()">Continuar</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h2>Uso Diario</h2>
+            <p class="subtitle">¿Cuánto tiempo dedicas a las redes?</p>
+            <div class="form-group">
+                <label>Horas en pantalla</label>
+                <select id="userTime">
+                    <option value="Menos de 2h">Menos de 2h</option>
+                    <option value="2h - 4h">2h - 4h</option>
+                    <option value="4h - 6h">4h - 6h</option>
+                    <option value="Más de 6h">Más de 6h</option>
+                </select>
+            </div>
+            <div class="nav-footer">
+                <button type="button" class="btn-back" onclick="back()">Atrás</button>
+                <button type="button" class="btn-next" onclick="next()">Siguiente</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h2>Tu Preferida</h2>
+            <p class="subtitle">Elige la plataforma que más usas.</p>
+            <div class="form-group">
+                <label>Red principal</label>
+                <select id="mainNetwork" onchange="generateOptions()">
+                    <option value="">Selecciona una...</option>
+                    <option value="telegram">Telegram</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="x">X (Twitter)</option>
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="youtube">YouTube</option>
+                </select>
+            </div>
+            <div class="nav-footer">
+                <button type="button" class="btn-back" onclick="back()">Atrás</button>
+                <button type="button" class="btn-next" onclick="next()">Siguiente</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h2 id="dynamicTitle">¿Por qué?</h2>
+            <p class="subtitle">Selecciona lo que más te gusta.</p>
+            <div id="optionsList"></div>
+            <div class="nav-footer">
+                <button type="button" class="btn-back" onclick="back()">Atrás</button>
+                <button type="button" class="btn-next" id="btnFinalizar" onclick="next()">Finalizar</button>
+            </div>
+        </div>
+
+        <div class="step success-state">
+            <div class="icon-check">✓</div>
+            <h2>¡Completado!</h2>
+            <p class="subtitle">Tus datos se enviaron a la base de datos y a Analytics.</p>
+        </div>
+    </form>
+</div>
+
+<script type="module">
+    // --- 1. GOOGLE ANALYTICS (GA4) ---
+    const gaId = "G-R7M3TFV7FB";
+    const gaScript = document.createElement('script');
+    gaScript.async = true;
+    gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+    document.head.appendChild(gaScript);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', gaId);
+
+    // --- 2. FIREBASE ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAYerIU7V2Bb8beX6NiSrX3Kpib8RjCCVg",
+        authDomain: "formulario-ab11e.firebaseapp.com",
+        projectId: "formulario-ab11e",
+        storageBucket: "formulario-ab11e.firebasestorage.app",
+        messagingSenderId: "653293018440",
+        appId: "1:653293018440:web:23d95fa3efceeebb6b277d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --- 3. LÓGICA ---
+    let stepIndex = 0;
+    const steps = document.querySelectorAll(".step");
+    const bar = document.getElementById("bar");
+
+    window.update = function() {
+        steps.forEach((s, i) => s.classList.toggle("active", i === stepIndex));
+        bar.style.width = (stepIndex / (steps.length - 1)) * 100 + "%";
+    }
+
+    window.next = async function() {
+        if (stepIndex === 3) {
+            const btn = document.getElementById("btnFinalizar");
+            btn.innerText = "Guardando...";
+            btn.disabled = true;
+            await enviarDatos();
+        }
+        if (stepIndex < steps.length - 1) {
+            stepIndex++;
+            update();
+            gtag('event', 'paso_completado', { 'numero_paso': stepIndex });
+        }
+    }
+
+    window.back = function() {
+        if (stepIndex > 0) {
+            stepIndex--;
+            update();
+        }
+    }
+
+    async function enviarDatos() {
+        const red = document.getElementById("mainNetwork").value;
+        const payload = {
+            nombre: document.getElementById("userName").value,
+            edad: document.getElementById("userAge").value,
+            tiempo_uso: document.getElementById("userTime").value,
+            red_social: red,
+            intereses: Array.from(document.querySelectorAll('#optionsList input:checked')).map(cb => cb.value),
+            enviado_el: new Date()
+        };
+
+        try {
+            await addDoc(collection(db, "encuestas_sociales"), payload);
+            gtag('event', 'encuesta_finalizada', {
+                'red_elegida': red,
+                'edad_usuario': payload.edad
+            });
+        } catch (e) {
+            console.error("Error:", e);
+        }
+    }
+
+    window.generateOptions = function() {
+        const net = document.getElementById("mainNetwork").value;
+        const list = document.getElementById("optionsList");
+        const title = document.getElementById("dynamicTitle");
+        const data = {
+            telegram: ["Canales y noticias", "Bots", "Privacidad"],
+            instagram: ["Stories y Reels", "Mensajes directos", "Explorar"],
+            tiktok: ["Vídeos divertidos", "Tendencias", "Directos"],
+            facebook: ["Marketplace", "Grupos", "Juegos"],
+            x: ["Noticias", "Debates", "Memes"],
+            whatsapp: ["Chats", "Llamadas", "Trabajo"],
+            youtube: ["Tutoriales", "Música", "Podcasts"]
+        };
+        list.innerHTML = "";
+        if(net && data[net]) {
+            title.innerText = `¿Qué prefieres de ${net.charAt(0).toUpperCase() + net.slice(1)}?`;
+            data[net].forEach(opt => {
+                list.innerHTML += `
+                    <div class="option-box" onclick="let c=this.querySelector('input'); c.checked=!c.checked;">
+                        <input type="checkbox" value="${opt}" style="margin-right: 15px; accent-color: var(--primary);">
+                        <span>${opt}</span>
+                    </div>`;
+            });
+        }
+    }
+</script>
+</body>
+</html>
