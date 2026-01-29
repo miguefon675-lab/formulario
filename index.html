@@ -174,7 +174,7 @@
         <div class="step success-state">
             <div class="icon-check">✓</div>
             <h2>¡Completado!</h2>
-            <p class="subtitle">Tus datos se enviaron a la base de datos y a Analytics.</p>
+            <p class="subtitle">gracias por tu colaboración.</p>
         </div>
     </form>
 </div>
@@ -266,13 +266,13 @@
         const list = document.getElementById("optionsList");
         const title = document.getElementById("dynamicTitle");
         const data = {
-            telegram: ["Canales y noticias", "Bots", "Privacidad"],
+            telegram: ["Canales y noticias", "Bots", "Privacidad", "descargar multimedia"],
             instagram: ["Stories y Reels", "Mensajes directos", "Explorar"],
-            tiktok: ["Vídeos divertidos", "Tendencias", "Directos"],
-            facebook: ["Marketplace", "Grupos", "Juegos"],
+            tiktok: ["Vídeos divertidos", "Tendencias", "Directos", "mensajes"],
+            facebook: ["Marketplace", "Grupos", "Juegos", "mensajes"],
             x: ["Noticias", "Debates", "Memes"],
             whatsapp: ["Chats", "Llamadas", "Trabajo"],
-            youtube: ["Tutoriales", "Música", "Podcasts"]
+            youtube: ["Tutoriales", "Música", "Podcasts", "subir contenido"]
         };
         list.innerHTML = "";
         if(net && data[net]) {
@@ -290,4 +290,5 @@
 </body>
 
 </html>
+
 
